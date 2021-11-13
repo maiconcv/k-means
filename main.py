@@ -13,11 +13,11 @@ def get_file_name() -> str:
         sys.exit()
 
 
-def remove_spaces_of(line: List[str]):
+def remove_spaces_of(line: List[str]) -> List[str]:
     return [element for element in line if element != '']
 
 
-def read_dataset(file_name: str, delimiter: str):
+def read_dataset(file_name: str, delimiter: str) -> List[DataInstance]:
     data_instances = []
 
     try:
