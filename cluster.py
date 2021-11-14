@@ -1,24 +1,26 @@
 import statistics
 import math
+from dataset import Dataset
+
 
 class Cluster(object):
     '''
     This class represents a cluster.
     '''
-    def __init__(self, dataset):
+
+    def __init__(self, dataset: Dataset):
         self._instances = []
-        self._DATASET = dataset
+        self._DATASET: Dataset = dataset
         self.centroid = None
 
     def update_centroid(self) -> None:
         '''
         Updates the cluster's centroid based on the instances present on it.
         '''
-        INSTANCES = [instance for idx, instance in enumerate(self._DATASET.instances) if idx in self._instances]
-        NUM_ATTRIBUTES = len(instances[0])
-        
+        INSTANCES = [instance for idx, instance in enumerate(self._DATASET) if idx in self._instances]
+
         centroid_new_attributes = []
-        for attr_idx in range(NUM_ATTRIBUTES):
+        for attr_idx in range(self._DATASET.NUM_ATTRIBUTES):
             centroid_new_attributes.append(statistics.mean([r[attr_idx] for r in INSTANCES]))
 
         self.centroid = centroid_new_attributes
@@ -35,7 +37,7 @@ class Cluster(object):
         '''
         self._instances.remove(instance_id)
 
-    def distance(instance_id: int) -> float:
+    def distance(self, instance_id: int) -> float:
         '''
         Calculates the distance of an instance to this cluster's centroid.
         '''
@@ -46,6 +48,13 @@ class Cluster(object):
             result += (x - y) ** 2
 
         return math.sqrt(result)
+
+    def wss(self) -> float:
+        result: float = 0.0
+        for INSTANCE in self._DATASET:
+            for x, y in zip(INSTANCE, self.centroid):
+                result += (x - y) ** 2
+        return result
 
     def __str__(self) -> str:
         return "Cluster with {0} instances".format(self._instances)
