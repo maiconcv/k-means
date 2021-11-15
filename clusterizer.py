@@ -40,21 +40,21 @@ class Clusterizer(object):
 
         return changed
 
-    def run(self):
+    def run(self) -> None:
         while self.step():
             print(self.wss())
 
-    def wss(self):
+    def wss(self) -> float:
         result: float = 0.0
         for index in range(self.k):
             result += self.clusters[index].wss()
         return result
 
-    def _generate_random_point(self):
+    def _generate_random_point(self) -> List[float]:
         return [random.uniform(0, 1) for _ in range(self._DATASET.NUM_ATTRIBUTES)]
 
-    def _create_clusters(self):
-        centroids: List[float] = []
+    def _create_clusters(self) -> None:
+        centroids: List[List[float]] = []
         for _ in range(self.k):
             cluster: Cluster = Cluster(self._DATASET)
             candidate = self._generate_random_point()

@@ -2,14 +2,16 @@ import os
 import csv
 from typing import List
 
+from cluster import Cluster
+
 
 class Exporter(object):
-    '''
+    """
     Exports cluster results.
-    '''
-    def __init__(self, target_file: str, data: List[List[float]], clusters: List[List[float]]):
+    """
+    def __init__(self, target_file: str, data: List[List[float]], clusters: List[Cluster]):
         self.FILENAME = target_file
-        self.CLUSTERS = clusters
+        self.CLUSTERS: List[Cluster] = clusters
         self.DATA = data
 
     def export_to_file(self):

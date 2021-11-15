@@ -4,16 +4,17 @@ from pathlib import Path
 from typing import List, Tuple
 from constants import TYPE_MAP
 
+
 class Dataset(object):
-    '''
+    """
     This class represents the dataset.
-    '''
+    """
     def __init__(self, filename: str, delimiter: str, has_header: bool):
         self._FILENAME = filename
         self._DELIMITER = delimiter
         self._HAS_HEADER = has_header
         self._METADATA = self._read_metadata()
-        self._RAW_INSTANCES = self._read_dataset()
+        self._RAW_INSTANCES: List[List[str]] = self._read_dataset()
         self.NUM_INSTANCES: int = len(self._RAW_INSTANCES)
         self.NUM_ATTRIBUTES: int = len(self._RAW_INSTANCES[0])
         self.INSTANCES = self._normalize_instances()
@@ -21,10 +22,10 @@ class Dataset(object):
     def _remove_spaces_of(self, line: List[str]) -> List[str]:
         return [element for element in line if element != '']
 
-    def _read_dataset(self) -> List[List[float]]:
-        '''
+    def _read_dataset(self) -> List[List[str]]:
+        """
         Reads the data from the dataset given.
-        '''
+        """
         raw_data_instances = []
 
         try:
@@ -47,11 +48,11 @@ class Dataset(object):
 
         normalized_dataset = []
         for instance_index in range(self.NUM_INSTANCES):
-            PARSED_INSTANCE = self._parse_attributes(self._RAW_INSTANCES[instance_index])
+            parsed_instance = self._parse_attributes(self._RAW_INSTANCES[instance_index])
             normalized_instance = []
             for attr_index in range(self.NUM_ATTRIBUTES):
                 min_value, max_value = attribute_min_max_values[attr_index]
-                instance_attribute_value = PARSED_INSTANCE[attr_index]
+                instance_attribute_value = parsed_instance[attr_index]
 
                 normalized_attribute = (instance_attribute_value - min_value) / (max_value - min_value)
                 normalized_instance.append(normalized_attribute)
@@ -87,9 +88,9 @@ class Dataset(object):
             sys.exit()
 
     def _parse_attributes(self, raw_attributes: List[str]) -> List[float]:
-        '''
+        """
         Parses attributes according to their type and return a numerical value.
-        '''
+        """
         assert len(raw_attributes) == len(self._METADATA), "Mismatch in the metadata and attributes read."
 
         return [TYPE_MAP[self._METADATA[idx]](attribute) for idx, attribute in enumerate(raw_attributes)]
