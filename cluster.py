@@ -20,8 +20,12 @@ class Cluster(object):
         INSTANCES = [instance for idx, instance in enumerate(self._DATASET) if idx in self._instances]
 
         centroid_new_attributes = []
-        for attr_idx in range(self._DATASET.NUM_ATTRIBUTES):
-            centroid_new_attributes.append(statistics.mean([r[attr_idx] for r in INSTANCES]))
+        if len(INSTANCES) == 0:
+            centroid_new_attributes = [0 for _ in range(self._DATASET.NUM_ATTRIBUTES)]
+            print("Cluster with no data inside!")
+        else:
+            for attr_idx in range(self._DATASET.NUM_ATTRIBUTES):
+                centroid_new_attributes.append(statistics.mean([r[attr_idx] for r in INSTANCES]))
 
         self.centroid = centroid_new_attributes
 
