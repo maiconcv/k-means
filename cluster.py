@@ -56,7 +56,8 @@ class Cluster(object):
 
     def wss(self) -> float:
         result: float = 0.0
-        for INSTANCE in self._DATASET:
+        INSTANCES = [instance for idx, instance in enumerate(self._DATASET) if idx in self._instances]
+        for INSTANCE in INSTANCES:
             for x, y in zip(INSTANCE, self.centroid):
                 result += (x - y) ** 2
         return result
