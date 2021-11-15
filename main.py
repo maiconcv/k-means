@@ -14,6 +14,8 @@ def main():
     file_name = get_file_name()
     dataset = Dataset(file_name)
     print(dataset)
+    for i in dataset:
+        print(i)
 
 
 if __name__ == '__main__':
