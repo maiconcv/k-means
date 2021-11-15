@@ -40,9 +40,15 @@ class Clusterizer(object):
 
         return changed
 
-    def run(self) -> None:
+    def run(self) -> float:
+        '''
+        Returns the WCSS value of the clusters.
+        '''
+        res = 0.0
         while self.step():
-            print(self.wss())
+            res = self.wss()
+
+        return res
 
     def wss(self) -> float:
         result: float = 0.0
