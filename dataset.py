@@ -47,10 +47,11 @@ class Dataset(object):
 
         normalized_dataset = []
         for instance_index in range(self.NUM_INSTANCES):
+            PARSED_INSTANCE = self._parse_attributes(self._RAW_INSTANCES[instance_index])
             normalized_instance = []
             for attr_index in range(self.NUM_ATTRIBUTES):
                 min_value, max_value = attribute_min_max_values[attr_index]
-                instance_attribute_value = self._parse_attributes(self._RAW_INSTANCES[instance_index][attr_index])
+                instance_attribute_value = PARSED_INSTANCE[attr_index]
 
                 normalized_attribute = (instance_attribute_value - min_value) / (max_value - min_value)
                 normalized_instance.append(normalized_attribute)

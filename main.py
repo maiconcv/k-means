@@ -1,5 +1,6 @@
 import sys
 from dataset import Dataset
+from clusterizer import Clusterizer
 
 
 def get_file_name() -> str:
@@ -12,7 +13,7 @@ def get_file_name() -> str:
 
 def main():
     file_name = get_file_name()
-    dataset = Dataset(file_name)
+    dataset = Dataset(file_name, ' ', False)
     print(dataset)
     for i in dataset:
         print(i)
