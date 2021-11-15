@@ -21,6 +21,7 @@ class Cluster(object):
 
         centroid_new_attributes = []
         if len(instances) == 0:
+            # Não seria melhor randomizar?
             centroid_new_attributes = [0 for _ in range(self._DATASET.NUM_ATTRIBUTES)]
             print("Cluster with no data inside!")
         else:

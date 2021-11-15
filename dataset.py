@@ -9,6 +9,7 @@ class Dataset(object):
     """
     This class represents the dataset.
     """
+
     def __init__(self, filename: str, delimiter: str, has_header: bool):
         self._FILENAME = filename
         self._DELIMITER = delimiter
@@ -16,7 +17,9 @@ class Dataset(object):
         self._METADATA = self._read_metadata()
         self._RAW_INSTANCES: List[List[str]] = self._read_dataset()
         self.NUM_INSTANCES: int = len(self._RAW_INSTANCES)
-        self.NUM_ATTRIBUTES: int = len(self._RAW_INSTANCES[0])
+        self.NUM_ATTRIBUTES_RAW: int = len(self._RAW_INSTANCES[0])
+        self._HOT_ENCODING, self._METADATA = self._one_hot_encoding()
+        self.NUM_ATTRIBUTES: int = len(self._HOT_ENCODING[0])
         self.INSTANCES = self._normalize_instances()
 
     def _remove_spaces_of(self, line: List[str]) -> List[str]:
@@ -33,22 +36,49 @@ class Dataset(object):
                 lines = csv.reader(data_file, delimiter=self._DELIMITER)
                 if self._HAS_HEADER:
                     next(lines)
-                
+
                 for line in lines:
                     attributes = self._remove_spaces_of(line)
                     raw_data_instances.append(attributes)
-            
+
             return raw_data_instances
         except FileNotFoundError:
             print('Dataset file not found. Exiting...')
             sys.exit()
+
+    def _one_hot_encoding(self) -> List[List[float]]:
+        hot_dataset = []
+        uniques = {}
+        new_metadata = []
+        for index, meta in enumerate(self._METADATA):
+            if meta == 'c':
+                column = map(lambda instance: instance[index], self._RAW_INSTANCES)
+                uniques[index] = list(set(column))
+                for _ in uniques[index]:
+                    new_metadata.append('b')
+            else:
+                new_metadata.append(meta)
+
+        for instance in self._RAW_INSTANCES:
+            new_instance = []
+            for index, meta in enumerate(self._METADATA):
+                if meta == 'c':
+                    for unique in uniques[index]:
+                        if instance[index] == unique:
+                            new_instance.append(1.0)
+                        else:
+                            new_instance.append(0.0)
+                else:
+                    new_instance.append(instance[index])
+            hot_dataset.append(new_instance)
+        return hot_dataset, new_metadata
 
     def _normalize_instances(self) -> List[List[float]]:
         attribute_min_max_values = self._calculate_min_max_values_of_attributes()
 
         normalized_dataset = []
         for instance_index in range(self.NUM_INSTANCES):
-            parsed_instance = self._parse_attributes(self._RAW_INSTANCES[instance_index])
+            parsed_instance = self._parse_attributes(self._HOT_ENCODING[instance_index])
             normalized_instance = []
             for attr_index in range(self.NUM_ATTRIBUTES):
                 min_value, max_value = attribute_min_max_values[attr_index]
@@ -63,10 +93,10 @@ class Dataset(object):
     def _calculate_min_max_values_of_attributes(self) -> List[Tuple[float, float]]:
         attribute_min_max_values = []
         for attr_index in range(self.NUM_ATTRIBUTES):
-            min_value = min(map(lambda instance: float(instance[attr_index]), self._RAW_INSTANCES))
-            max_value = max(map(lambda instance: float(instance[attr_index]), self._RAW_INSTANCES))
+            min_value = min(map(lambda instance: float(instance[attr_index]), self._HOT_ENCODING))
+            max_value = max(map(lambda instance: float(instance[attr_index]), self._HOT_ENCODING))
             attribute_min_max_values.append((min_value, max_value))
-        
+
         return attribute_min_max_values
 
     def _read_metadata(self) -> List[str]:
