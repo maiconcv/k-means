@@ -29,7 +29,8 @@ class Cluster(object):
         '''
         Adds a data instance reference (id on the dataset) to this cluster.
         '''
-        self._instances.append(instance_id)
+        if instance_id not in self._instances:
+            self._instances.append(instance_id)
 
     def remove_instance(self, instance_id: int) -> None:
         '''

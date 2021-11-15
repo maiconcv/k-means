@@ -8,6 +8,7 @@ class Clusterizer(object):
     def __init__(self, k: int, dataset: Dataset):
         self.k: int = k
         self.clusters: List[Cluster] = []
+        # Dictionary of instance_id to cluster_id
         self.instance_dict: Dict[int, int] = {}
         self._DATASET: Dataset = dataset
         self._create_clusters()
@@ -23,6 +24,7 @@ class Clusterizer(object):
             for instance_id in range(self._DATASET.NUM_INSTANCES):
                 cluster_id = self._find_closest_cluster(instance_id)
                 self.clusters[cluster_id].add_instance(instance_id)
+                self.instance_dict[instance_id] = cluster_id
         else:
             for instance_id in range(self._DATASET.NUM_INSTANCES):
                 cluster_id = self._find_closest_cluster(instance_id)
@@ -31,9 +33,11 @@ class Clusterizer(object):
                     changed = True
                     self.clusters[old_cluster_id].remove_instance(instance_id)
                     self.clusters[cluster_id].add_instance(instance_id)
+                    self.instance_dict[instance_id] = cluster_id
         if changed:
             for cluster in self.clusters:
                 cluster.update_centroid()
+
         return changed
 
     def run(self):

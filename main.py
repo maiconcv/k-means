@@ -14,9 +14,8 @@ def get_file_name() -> str:
 def main():
     file_name = get_file_name()
     dataset = Dataset(file_name, ' ', False)
-    print(dataset)
-    for i in dataset:
-        print(i)
+    clusterizer = Clusterizer(5, dataset)
+    clusterizer.run()
 
 
 if __name__ == '__main__':
