@@ -14,14 +14,14 @@ def get_file_name() -> str:
 
 def main():
     file_name = get_file_name()
-    dataset = Dataset(file_name, ' ', False)
+    dataset = Dataset(file_name, ' ', False, True)
 
     wss_values = []
-    for i in range(1, 13):
+    for i in range(15, 16):
         print("Running K-Means with {0} clusters...".format(i))
         clusterizer = Clusterizer(i, dataset)
         wss_values.append([i, clusterizer.run()])
-        exp = Exporter("benchmark" + "_" + str(i) + ".csv", dataset.INSTANCES, clusterizer.clusters)
+        exp = Exporter("benchmark" + "_" + str(i) + ".csv", dataset.INSTANCES, clusterizer.clusters, dataset.GROUND_TRUTH)
         exp.export_to_file()
 
     exp = Exporter("WCSS_Values.csv", wss=wss_values)

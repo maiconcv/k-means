@@ -10,7 +10,7 @@ class Dataset(object):
     This class represents the dataset.
     """
 
-    def __init__(self, filename: str, delimiter: str, has_header: bool):
+    def __init__(self, filename: str, delimiter: str, has_header: bool, ground_truth: bool = None):
         self._FILENAME = filename
         self._DELIMITER = delimiter
         self._HAS_HEADER = has_header
@@ -21,6 +21,7 @@ class Dataset(object):
         self._HOT_ENCODING, self._METADATA = self._one_hot_encoding()
         self.NUM_ATTRIBUTES: int = len(self._HOT_ENCODING[0])
         self.INSTANCES = self._normalize_instances()
+        self.GROUND_TRUTH = self._read_ground_truth_file() if ground_truth else None
 
     def _remove_spaces_of(self, line: List[str]) -> List[str]:
         return [element for element in line if element != '']
@@ -124,6 +125,36 @@ class Dataset(object):
         assert len(raw_attributes) == len(self._METADATA), "Mismatch in the metadata and attributes read."
 
         return [TYPE_MAP[self._METADATA[idx]](attribute) for idx, attribute in enumerate(raw_attributes)]
+
+    def _read_ground_truth_file(self):
+        ground_truth = []
+        raw_data_instances = []
+
+        p = Path(self._FILENAME)
+        p = p.with_name(p.stem + "_groundtruth.txt")
+        with open(p) as data_file:
+            lines = csv.reader(data_file, delimiter=self._DELIMITER)
+            if self._HAS_HEADER:
+                next(lines)
+
+            for line in lines:
+                attributes = self._remove_spaces_of(line)
+                raw_data_instances.append(attributes)
+
+        attribute_min_max_values = self._calculate_min_max_values_of_attributes()
+
+        for gt_idx in range(len(raw_data_instances)):
+            parsed_instance = self._parse_attributes(raw_data_instances[gt_idx])
+            normalized_instance = []
+            for attr_index in range(self.NUM_ATTRIBUTES):
+                min_value, max_value = attribute_min_max_values[attr_index]
+                instance_attribute_value = parsed_instance[attr_index]
+
+                normalized_attribute = (instance_attribute_value - min_value) / (max_value - min_value)
+                normalized_instance.append(normalized_attribute)
+            ground_truth.append(normalized_instance)
+
+        return ground_truth
 
     def __getitem__(self, key):
         return self.INSTANCES[key]
