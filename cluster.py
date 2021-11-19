@@ -1,6 +1,7 @@
 import statistics
 import math
 from dataset import Dataset
+from typing import List
 
 
 class Cluster(object):
@@ -8,10 +9,10 @@ class Cluster(object):
     This class represents a cluster.
     """
 
-    def __init__(self, dataset: Dataset):
+    def __init__(self, dataset: Dataset, centroid: List[float]):
         self._instances = []
         self._DATASET: Dataset = dataset
-        self.centroid = None
+        self.centroid = centroid
 
     def update_centroid(self) -> None:
         """
@@ -42,18 +43,6 @@ class Cluster(object):
         Remove an instance from this cluster.
         """
         self._instances.remove(instance_id)
-
-    def distance(self, instance_id: int) -> float:
-        """
-        Calculates the distance of an instance to this cluster's centroid.
-        """
-        instance = self._DATASET[instance_id]
-        assert len(instance) == len(self.centroid), 'Instance and Centroid must have the same number of attributes.'
-        result = 0.0
-        for x, y in zip(instance, self.centroid):
-            result += (x - y) ** 2
-
-        return math.sqrt(result)
 
     def wss(self) -> float:
         result: float = 0.0

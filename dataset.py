@@ -165,6 +165,9 @@ class Dataset(object):
     def __next__(self):
         return next(self.INSTANCES)
 
+    def __len__(self):
+        return len(self.INSTANCES)
+
     def __str__(self):
         return "Dataset with {0} instances and {1} attributes".format(self.NUM_INSTANCES, self.NUM_ATTRIBUTES)
 
