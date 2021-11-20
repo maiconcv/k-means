@@ -8,9 +8,10 @@ import math
 
 
 class Clusterizer(object):
-    def __init__(self, k: int, dataset: Dataset):
+    def __init__(self, k: int, dataset: Dataset, useKMeanspp: bool):
         self.k: int = k
         self.clusters: List[Cluster] = []
+        self.USE_KMEANSPP = useKMeanspp
         # Dictionary of instance_id to cluster_id
         self.instance_dict: Dict[int, int] = {}
         self._DATASET: Dataset = dataset
@@ -77,20 +78,23 @@ class Clusterizer(object):
         For each cluster finds the data point furthest from the closest cluster.
         '''
         centroids = []
-        centroids.append(random.choice(self._DATASET))
-    
-        for _ in range(self.k - 1):
-            distances_to_closest_centroid = []
-            for instance in self._DATASET:                
-                distance_to_closest_cluster = sys.maxsize
-                for centroid in centroids:
-                    distance_to_centroid = utils.euclidean_distance(instance, centroid)
-                    distance_to_closest_cluster = min(distance_to_closest_cluster, distance_to_centroid)
-                distances_to_closest_centroid.append(distance_to_closest_cluster)
-                
-            index_furthest_point = distances_to_closest_centroid.index(max(distances_to_closest_centroid))
-            next_centroid = self._DATASET[index_furthest_point]
-            centroids.append(next_centroid)
-            distances_to_closest_centroid = []
+        if self.USE_KMEANSPP:
+            centroids.append(random.choice(self._DATASET))
+        
+            for _ in range(self.k - 1):
+                distances_to_closest_centroid = []
+                for instance in self._DATASET:                
+                    distance_to_closest_cluster = sys.maxsize
+                    for centroid in centroids:
+                        distance_to_centroid = utils.euclidean_distance(instance, centroid)
+                        distance_to_closest_cluster = min(distance_to_closest_cluster, distance_to_centroid)
+                    distances_to_closest_centroid.append(distance_to_closest_cluster)
+                    
+                index_furthest_point = distances_to_closest_centroid.index(max(distances_to_closest_centroid))
+                next_centroid = self._DATASET[index_furthest_point]
+                centroids.append(next_centroid)
+                distances_to_closest_centroid = []
+        else:
+            centroids = random.choices(self._DATASET, k=self.k)
 
         return centroids

@@ -34,7 +34,7 @@ class Dataset(object):
 
         try:
             with open(self._FILENAME) as data_file:
-                lines = csv.reader(data_file, delimiter=self._DELIMITER)
+                lines = csv.reader(data_file, delimiter=self._DELIMITER  if self._DELIMITER != "tab" else '\t')
                 if self._HAS_HEADER:
                     next(lines)
 

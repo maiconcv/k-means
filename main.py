@@ -1,4 +1,5 @@
 import sys
+import argparse
 from pathlib import Path
 from dataset import Dataset
 from clusterizer import Clusterizer
@@ -6,25 +7,17 @@ from exporter import Exporter
 from utils import *
 
 
-def get_file_name() -> str:
-    try:
-        return sys.argv[1]
-    except IndexError:
-        print('Missing dataset file argument. Exiting...')
-        sys.exit()
-
-
-def main():
-    file_name = get_file_name()
-    p = Path(file_name)
-    dataset = Dataset(file_name, ' ', False, True)
+def main(args):
+    p = Path(args.d)
+    dataset = Dataset(args.d, args.s, False, True)
 
     wss_values = []
-    for i in range(15, 16):
+    
+    for i in range(args.k_base if (args.k_base is not None) else args.k, args.k + 1):
         print("Running K-Means with {0} clusters...".format(i))
-        clusterizer = Clusterizer(i, dataset)
+        clusterizer = Clusterizer(i, dataset, args.kmeanspp)
         wss_values.append([i, clusterizer.run()])
-        exp = Exporter(p.stem + "_" + str(i) + ".csv", dataset.INSTANCES, clusterizer.clusters, dataset.GROUND_TRUTH)
+        exp = Exporter(p.stem + "_" + str(i) + "_" + str(args.kmeanspp) + ".csv", dataset.INSTANCES, clusterizer.clusters, dataset.GROUND_TRUTH)
         exp.export_to_file()
         print("Centroid index: {}".format(centroid_index(clusterizer.clusters, dataset.GROUND_TRUTH)))
 
@@ -33,4 +26,14 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Runs K-Means clustering.')
+    parser.add_argument('-k', type=int, help='value for the hyperparameter k')
+    parser.add_argument('-k_base', type=int, nargs='?', default=None, help='lower range value for k')
+    parser.add_argument('-d', type=str, help='path to the dataset file')
+    parser.add_argument('-s', type=str, help='dataset file delimiter')
+    parser.add_argument('-header', type=bool, help='if the dataset file has a header')
+    parser.add_argument('-gt', type=bool, help='if the dataset file has a corresponding ground truth file')
+    parser.add_argument('-kmeanspp', type=bool, default=True, help='if the kmeans++ initialization should be used by the clusterizer')
+
+    args = parser.parse_args()
+    main(args)
