@@ -20,7 +20,7 @@ def centroid_index(results: List[List[float]], ground_truth: List[List[float]]):
     '''
     nearest_map = {}
     for idx, res in enumerate(results):
-        distances = [euclidean_distance(gt, res.centroid) for gt in ground_truth]
+        distances = [euclidean_distance(gt, res) for gt in ground_truth]
         nearest_map[idx] = distances.index(min(distances))    
 
     ci = 0

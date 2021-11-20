@@ -9,7 +9,7 @@ from utils import *
 
 def main(args):
     p = Path(args.d)
-    dataset = Dataset(args.d, args.s, False, True)
+    dataset = Dataset(args.d, args.s, args.header, args.gt)
 
     wss_values = []
     
@@ -19,7 +19,9 @@ def main(args):
         wss_values.append([i, clusterizer.run()])
         exp = Exporter(p.stem + "_" + str(i) + "_" + str(args.kmeanspp) + ".csv", dataset.INSTANCES, clusterizer.clusters, dataset.GROUND_TRUTH)
         exp.export_to_file()
-        print("Centroid index: {}".format(centroid_index(clusterizer.clusters, dataset.GROUND_TRUTH)))
+        
+        if dataset.GROUND_TRUTH is not None:
+            print("Centroid index: {}".format(centroid_index([c.centroid for c in clusterizer.clusters], dataset.GROUND_TRUTH)))
 
     exp = Exporter(p.stem + "_WCSS_Values.csv", wss=wss_values)
     exp.export_to_file()
