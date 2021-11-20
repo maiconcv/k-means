@@ -3,6 +3,7 @@ from pathlib import Path
 from dataset import Dataset
 from clusterizer import Clusterizer
 from exporter import Exporter
+from utils import *
 
 
 def get_file_name() -> str:
@@ -16,15 +17,16 @@ def get_file_name() -> str:
 def main():
     file_name = get_file_name()
     p = Path(file_name)
-    dataset = Dataset(file_name, '\t', True, False)
+    dataset = Dataset(file_name, ' ', False, True)
 
     wss_values = []
-    for i in range(1, 16):
+    for i in range(15, 16):
         print("Running K-Means with {0} clusters...".format(i))
         clusterizer = Clusterizer(i, dataset)
         wss_values.append([i, clusterizer.run()])
         exp = Exporter(p.stem + "_" + str(i) + ".csv", dataset.INSTANCES, clusterizer.clusters, dataset.GROUND_TRUTH)
         exp.export_to_file()
+        print("Centroid index: {}".format(centroid_index(clusterizer.clusters, dataset.GROUND_TRUTH)))
 
     exp = Exporter(p.stem + "_WCSS_Values.csv", wss=wss_values)
     exp.export_to_file()
