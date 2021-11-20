@@ -31,8 +31,8 @@ if __name__ == '__main__':
     parser.add_argument('-k_base', type=int, nargs='?', default=None, help='lower range value for k')
     parser.add_argument('-d', type=str, help='path to the dataset file')
     parser.add_argument('-s', type=str, help='dataset file delimiter')
-    parser.add_argument('-header', type=bool, help='if the dataset file has a header')
-    parser.add_argument('-gt', type=bool, help='if the dataset file has a corresponding ground truth file')
+    parser.add_argument('-header', action='store_true', help='if the dataset file has a header')
+    parser.add_argument('-gt', action='store_true', help='if the dataset file has a corresponding ground truth file')
     parser.add_argument('-kmeanspp', action='store_true', help='if the kmeans++ initialization should be used by the clusterizer')
 
     args = parser.parse_args()
