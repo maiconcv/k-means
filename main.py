@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', type=str, help='dataset file delimiter')
     parser.add_argument('-header', type=bool, help='if the dataset file has a header')
     parser.add_argument('-gt', type=bool, help='if the dataset file has a corresponding ground truth file')
-    parser.add_argument('-kmeanspp', type=bool, default=True, help='if the kmeans++ initialization should be used by the clusterizer')
+    parser.add_argument('-kmeanspp', action='store_true', help='if the kmeans++ initialization should be used by the clusterizer')
 
     args = parser.parse_args()
     main(args)
