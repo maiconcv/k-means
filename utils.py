@@ -15,9 +15,9 @@ def euclidean_distance(p1, p2) -> float:
 
 
 def centroid_index(results: List[List[float]], ground_truth: List[List[float]]):
-    '''
+    """
     Calculates the centroid index.
-    '''
+    """
     nearest_map = {}
     for idx, res in enumerate(results):
         distances = [euclidean_distance(gt, res) for gt in ground_truth]

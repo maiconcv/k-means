@@ -4,14 +4,13 @@ from dataset import Dataset
 import utils
 import random
 import sys
-import math
 
 
 class Clusterizer(object):
-    def __init__(self, k: int, dataset: Dataset, useKMeanspp: bool):
+    def __init__(self, k: int, dataset: Dataset, use_k_means_pp: bool):
         self.k: int = k
         self.clusters: List[Cluster] = []
-        self.USE_KMEANSPP = useKMeanspp
+        self.USE_KMEANSPP = use_k_means_pp
         # Dictionary of instance_id to cluster_id
         self.instance_dict: Dict[int, int] = {}
         self._DATASET: Dataset = dataset
@@ -22,10 +21,10 @@ class Clusterizer(object):
         return distances.index(min(distances))
 
     def step(self) -> bool:
-        '''
+        """
         Runs 1 step of the cluster.
         Returns if a cluster was changed or not.
-        '''
+        """
         changed = False
         if len(self.instance_dict) == 0:
             changed = True
@@ -49,9 +48,9 @@ class Clusterizer(object):
         return changed
 
     def run(self) -> float:
-        '''
+        """
         Returns the WCSS value of the clusters.
-        '''
+        """
         res = 0.0
         while self.step():
             res = self._wss()
@@ -73,10 +72,10 @@ class Clusterizer(object):
         self.clusters = [Cluster(self._DATASET, centroid) for centroid in centroids]
 
     def _initialize_centroids(self):
-        '''
+        """
         K-Means++ initialization.
         For each cluster finds the data point furthest from the closest cluster.
-        '''
+        """
         centroids = []
         if self.USE_KMEANSPP:
             centroids.append(random.choice(self._DATASET))

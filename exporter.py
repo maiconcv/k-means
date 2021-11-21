@@ -8,7 +8,12 @@ class Exporter(object):
     """
     Exports cluster results.
     """
-    def __init__(self, target_file: str, data: List[List[float]] = None, clusters: List[Cluster] = None, ground_truth: List[List[float]] = None, wss: List[Tuple[int, float]] = None):
+    def __init__(self,
+                 target_file: str,
+                 data: List[List[float]] = None,
+                 clusters: List[Cluster] = None,
+                 ground_truth: List[List[float]] = None,
+                 wss: List[Tuple[int, float]] = None):
         self.FILENAME = target_file
         self.CLUSTERS: List[Cluster] = clusters
         self.DATA = data
@@ -28,7 +33,7 @@ class Exporter(object):
             for cluster_res in self.CLUSTERS:
                 csv_rows.append([str(cluster_res.centroid[0]), '', str(cluster_res.centroid[1]), ''])
 
-            if (self.GROUND_TRUTH):
+            if self.GROUND_TRUTH:
                 for gt in self.GROUND_TRUTH:
                     csv_rows.append([str(gt[0]), '', '', str(gt[1])])
 

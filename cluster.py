@@ -1,5 +1,4 @@
 import statistics
-import math
 from dataset import Dataset
 from typing import List
 
@@ -46,8 +45,8 @@ class Cluster(object):
 
     def wss(self) -> float:
         result: float = 0.0
-        INSTANCES = [instance for idx, instance in enumerate(self._DATASET) if idx in self._instances]
-        for INSTANCE in INSTANCES:
+        instances = [instance for idx, instance in enumerate(self._DATASET) if idx in self._instances]
+        for INSTANCE in instances:
             for x, y in zip(INSTANCE, self.centroid):
                 result += (x - y) ** 2
         return result

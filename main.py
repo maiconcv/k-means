@@ -1,4 +1,3 @@
-import sys
 import argparse
 from pathlib import Path
 from dataset import Dataset
@@ -16,7 +15,7 @@ def main(args):
     for i in range(args.k_base if (args.k_base is not None) else args.k, args.k + 1):
         print("Running K-Means with {0} clusters...".format(i))
         clusterizer = Clusterizer(i, dataset, args.kmeanspp)
-        wss_values.append([i, clusterizer.run()])
+        wss_values.append((i, clusterizer.run()))
         exp = Exporter(p.stem + "_" + str(i) + "_" + str(args.kmeanspp) + ".csv", dataset.INSTANCES, clusterizer.clusters, dataset.GROUND_TRUTH)
         exp.export_to_file()
         
