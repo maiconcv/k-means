@@ -12,6 +12,7 @@ def main(args):
 
     wss_values = []
     
+    ci_total = 0
     for i in range(args.k_base if (args.k_base is not None) else args.k, args.k + 1):
         print("Running K-Means with {0} clusters...".format(i))
         clusterizer = Clusterizer(i, dataset, args.kmeanspp)
@@ -19,13 +20,34 @@ def main(args):
         exp = Exporter(p.stem + "_" + str(i) + "_" + str(args.kmeanspp) + ".csv", dataset.INSTANCES, clusterizer.clusters, dataset.GROUND_TRUTH)
         
         if dataset.GROUND_TRUTH is not None:
-            print("Centroid index: {}".format(centroid_index([c.centroid for c in clusterizer.clusters], dataset.GROUND_TRUTH)))
+            ci_value = centroid_index([c.centroid for c in clusterizer.clusters], dataset.GROUND_TRUTH)
+            ci_total += ci_value
+            print("Centroid index: {}".format(ci_value))
             exp.export_to_file()
         else:
             exp.export_results()
 
     exp = Exporter(p.stem + "_WCSS_Values.csv", wss=wss_values)
     exp.export_to_file()
+
+
+def run_centroid_index(args):
+    p = Path(args.d)
+    dataset = Dataset(args.d, args.s, args.header, args.gt)
+
+    ci_values = ["Centroid Index"]
+    for i in range(100):
+        print("Running K-Means with {0} clusters... {1}/100".format(args.k, i))
+        clusterizer = Clusterizer(args.k, dataset, args.kmeanspp)
+        clusterizer.run()
+        
+        if dataset.GROUND_TRUTH is not None:
+            ci_value = centroid_index([c.centroid for c in clusterizer.clusters], dataset.GROUND_TRUTH)
+            ci_values.append([ci_value])
+            print("Centroid index: {}".format(ci_value))
+
+    exp = Exporter(p.stem + "_CI_Values.csv", ci=ci_values)
+    exp.export_ci_file()
 
 
 if __name__ == '__main__':
@@ -37,6 +59,10 @@ if __name__ == '__main__':
     parser.add_argument('-header', action='store_true', help='if the dataset file has a header')
     parser.add_argument('-gt', action='store_true', help='if the dataset file has a corresponding ground truth file')
     parser.add_argument('-kmeanspp', action='store_true', help='if the kmeans++ initialization should be used by the clusterizer')
+    parser.add_argument('-ci_experiment', action='store_true', help='if the centroid index experiment should be run. Requires k, dataset, ground truth and separator.')
 
     args = parser.parse_args()
-    main(args)
+    if (args.ci_experiment):
+        run_centroid_index(args)
+    else:
+        main(args)

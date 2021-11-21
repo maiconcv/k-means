@@ -13,12 +13,14 @@ class Exporter(object):
                  data: List[List[float]] = None,
                  clusters: List[Cluster] = None,
                  ground_truth: List[List[float]] = None,
-                 wss: List[Tuple[int, float]] = None):
+                 wss: List[Tuple[int, float]] = None,
+                 ci: List[float] = None):
         self.FILENAME = target_file
         self.CLUSTERS: List[Cluster] = clusters
         self.DATA = data
         self.GROUND_TRUTH = ground_truth
         self.WCSS = wss
+        self.ci = ci
     
     def export_to_file(self):
         if not os.path.exists('./results'):
@@ -56,13 +58,29 @@ class Exporter(object):
         '''
         # Create header
         csv_rows = [['data_id', 'cluster_id']]
-        csv_rows[0].append(["attr_{0}".format(i) for i in range(len(self.DATA[0]))])
+        for i in range(len(self.DATA[0])):
+            csv_rows[0].append("attr_{0}".format(i))
 
         # Create cluster data
         for cluster_id, cluster_res in enumerate(self.CLUSTERS):
             for data_id in cluster_res._instances:
                 csv_rows.append([data_id, cluster_id])
-                csv_rows[-1].append([i for i in self.DATA[data_id]])
+                for col in [i for i in self.DATA[data_id]]:
+                    csv_rows[-1].append(col)
+
+        # Save to csv file
+        with open("./results/" + self.FILENAME, 'w', newline='') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerows(csv_rows)
+
+    def export_ci_values(self):
+        '''
+        Exports file with centroid index results.
+        '''
+        # Create header
+        csv_rows = []
+        for ci in enumerate(self.ci):
+            csv_rows.append(ci)
 
         # Save to csv file
         with open("./results/" + self.FILENAME, 'w', newline='') as csv_file:
