@@ -49,3 +49,22 @@ class Exporter(object):
             with open("./results/" + self.FILENAME, 'w', newline='') as csv_file:
                 writer = csv.writer(csv_file)
                 writer.writerows(csv_rows)
+
+    def export_results(self):
+        '''
+        Exports file with clusters and data points.
+        '''
+        # Create header
+        csv_rows = [['data_id', 'cluster_id']]
+        csv_rows[0].append(["attr_{0}".format(i) for i in range(len(self.DATA[0]))])
+
+        # Create cluster data
+        for cluster_id, cluster_res in enumerate(self.CLUSTERS):
+            for data_id in cluster_res._instances:
+                csv_rows.append([data_id, cluster_id])
+                csv_rows[-1].append([i for i in self.DATA[data_id]])
+
+        # Save to csv file
+        with open("./results/" + self.FILENAME, 'w', newline='') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerows(csv_rows)
