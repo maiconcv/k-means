@@ -54,7 +54,7 @@ class Dataset(object):
         for index, meta in enumerate(self._METADATA):
             if meta == 'c':
                 column = map(lambda instance: instance[index], self._RAW_INSTANCES)
-                uniques[index] = list(set(column))
+                uniques[index] = sorted(list(set(column)))
                 for _ in uniques[index]:
                     new_metadata.append('b')
             else:
