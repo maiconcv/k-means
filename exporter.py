@@ -79,7 +79,7 @@ class Exporter(object):
         '''
         # Create header
         csv_rows = []
-        for ci in enumerate(self.ci):
+        for ci in self.ci:
             csv_rows.append(ci)
 
         # Save to csv file
